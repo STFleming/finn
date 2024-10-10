@@ -223,7 +223,7 @@ def test_fpga_dataflow_quantsoftmax(impl_style, simd, idt, odt, ifm_dim):
     try:
         model = model.transform(SpecializeLayers(test_fpga_part))
         model = model.transform(GiveUniqueNodeNames())
-        model = model.transform(SetExecMode("cppsim"))
+        model = model.transform(SetExecMode("rtlsim"))
         model = model.transform(PrepareCppSim())
         model = model.transform(CompileCppSim())
     except Exception as e:
