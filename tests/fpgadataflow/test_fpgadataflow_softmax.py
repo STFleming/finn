@@ -113,6 +113,7 @@ def make_single_quantsoftmax_modelwrapper(impl_style="hls", simd=1, idt=DataType
         output_data_type = odt.name,
         simd=simd,
         preferred_impl_style=impl_style,
+        rtlsim_backend="pyxsi",
     )
     graph = helper.make_graph(
         [new_node],
