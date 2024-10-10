@@ -83,7 +83,6 @@ from finn.custom_op.fpgadataflow.upsampler import UpsampleNearestNeighbour
 from finn.custom_op.fpgadataflow.vectorvectoractivation import VVAU
 from finn.custom_op.fpgadataflow.quantsoftmax import QuantSoftmax
 
-
 # make sure new HLSCustomOp subclasses are imported here so that they get
 # registered and plug in correctly into the infrastructure
 custom_op["MVAU"] = MVAU
