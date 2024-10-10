@@ -220,19 +220,16 @@ def test_fpga_dataflow_quantsoftmax(impl_style, simd, idt, odt, ifm_dim):
     y_out = oxe.execute_onnx(model, input_t)[out_name]
     assert np.allclose(y_ref, y_out, atol=tollerance), "Model output does not match expected output"
 
-    try:
-        model = model.transform(SpecializeLayers(test_fpga_part))
-        model = model.transform(GiveUniqueNodeNames())
-        model = model.transform(SetExecMode("rtlsim"))
-        #model = model.transform(PrepareCppSim())
-        #model = model.transform(CompileCppSim())
-        model = model.transform(PrepareIP(test_fpga_part, target_clk_ns))
-        model = model.transform(HLSSynthIP())
-        model.save("DEBUG_1.onnx")
-        model = model.transform(PrepareRTLSim())
-        model.save("DEBUG_2.onnx")
-    except Exception as e:
-        pytest.fail(f"Failed to transform the model: {str(e)}")
+    model = model.transform(SpecializeLayers(test_fpga_part))
+    model = model.transform(GiveUniqueNodeNames())
+    model = model.transform(SetExecMode("rtlsim"))
+    #model = model.transform(PrepareCppSim())
+    #model = model.transform(CompileCppSim())
+    model = model.transform(PrepareIP(test_fpga_part, target_clk_ns))
+    model = model.transform(HLSSynthIP())
+    model.save("DEBUG_1.onnx")
+    model = model.transform(PrepareRTLSim())
+    model.save("DEBUG_2.onnx")
 
     # run the model
     y_hw = oxe.execute_onnx(model, input_t)[out_name]
