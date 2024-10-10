@@ -660,7 +660,6 @@ def test_elementwise_binary_operation_float_rtlsim(
 
     # Compare the expected to the produced for exact equality
     assert np.all(o_produced == o_expected)
->>>>>>> upstream/custom/RAS-baseline-floatops
 
 
 # Test-case setting up a complete dummy model containing various elementwise
