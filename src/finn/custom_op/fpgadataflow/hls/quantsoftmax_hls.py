@@ -29,8 +29,10 @@
 import numpy as np
 import os
 
+import finn.util.pyxsi_rpcclient as pyxsi_rpcclient
 from finn.custom_op.fpgadataflow import templates
 from finn.custom_op.fpgadataflow.hlsbackend import HLSBackend
+from finn.util.basic import make_build_dir
 from finn.custom_op.fpgadataflow.quantsoftmax import QuantSoftmax
 from finn.util.basic import CppBuilder
 
@@ -213,4 +215,13 @@ class QuantSoftmax_hls(QuantSoftmax, HLSBackend):
 
     def prepare_rtlsim(self):
         # this node currently does not support rtlsim
-        raise NotImplementedError("QuantSoftmax_hls does not support rtlsim")
+        verilog_files = self.get_all_verilog_filenames(abspath=True)
+        single_src_dir = make_build_dir("rtlsim_" + self.onnx_node.name + "_")
+
+        ret = pyxsi_rpcclient.compile_sim_obj(
+            self.get_verilog_top_module_name(), verilog_files, single_src_dir
+        )
+
+        # save generated lib filename in attribute
+        self.set_nodeattr("rtlsim_so", ret[0] + "/" + ret[1])
+

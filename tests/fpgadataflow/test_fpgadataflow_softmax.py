@@ -127,6 +127,8 @@ def make_single_quantsoftmax_modelwrapper(impl_style="hls", simd=1, idt=DataType
     model.set_tensor_datatype("global_in", idt)
     model.set_tensor_datatype("global_out", idt)
 
+    model.save("DEBUG_0.onnx")
+
     return model
 
 @pytest.mark.parametrize("exec_mode", ["cppsim", "rtlsim", "stitched_ip"])
@@ -176,12 +178,9 @@ def test_convert_to_hw_softmax_layer(exec_mode, simd):
             model = model.transform(SetExecMode("rtlsim"))
             model = model.transform(PrepareIP(test_fpga_part, target_clk_ns))
             model = model.transform(HLSSynthIP())
-            try:
-                model = model.transform(PrepareRTLSim())
-                pytest.fail("PrepareRTLSim should have failed")
-            except Exception as e:
-                # expected to fail because this node do not support rtlsim
-                pass
+            model.save("DEBUG_1.onnx")
+            model = model.transform(PrepareRTLSim())
+            model.save("DEBUG_2.onnx")
         elif exec_mode == "stitched_ip":
             model = model.transform(PrepareIP(test_fpga_part, target_clk_ns))
             model = model.transform(HLSSynthIP())
@@ -225,8 +224,13 @@ def test_fpga_dataflow_quantsoftmax(impl_style, simd, idt, odt, ifm_dim):
         model = model.transform(SpecializeLayers(test_fpga_part))
         model = model.transform(GiveUniqueNodeNames())
         model = model.transform(SetExecMode("rtlsim"))
-        model = model.transform(PrepareCppSim())
-        model = model.transform(CompileCppSim())
+        #model = model.transform(PrepareCppSim())
+        #model = model.transform(CompileCppSim())
+        model = model.transform(PrepareIP(test_fpga_part, target_clk_ns))
+        model = model.transform(HLSSynthIP())
+        model.save("DEBUG_1.onnx")
+        model = model.transform(PrepareRTLSim())
+        model.save("DEBUG_2.onnx")
     except Exception as e:
         pytest.fail(f"Failed to transform the model: {str(e)}")
 
