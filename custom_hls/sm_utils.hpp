@@ -42,12 +42,6 @@
 
 //- Compile-Time Functions --------------------------------------------------
 
-// ceil(log2(x))
-template<typename T>
-constexpr unsigned clog2(T  x) {
-  return  x<2? 0 : 1+clog2((x+1)/2);
-}
-
 //- Streaming Flit with `last` Marking --------------------------------------
 template<typename T>
 struct flit_t {
