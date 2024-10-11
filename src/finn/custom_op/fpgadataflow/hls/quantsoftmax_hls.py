@@ -144,7 +144,6 @@ class QuantSoftmax_hls(QuantSoftmax, HLSBackend):
                     }
             self.rtlsim_multi_io(sim, io_dict)
             out = io_dict["outputs"]["out"]
-            context[node.output[0]] = out
 
             odt = self.get_output_datatype()
             target_bits = odt.bitwidth()
