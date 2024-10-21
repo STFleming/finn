@@ -229,6 +229,19 @@ class QuantSoftmax_hls(QuantSoftmax, HLSBackend):
                 template = template.replace(key, code_gen_line)
             f.write(template)
 
+    def get_exp_cycles(self):
+        simd = self.get_nodeattr("simd")
+        ifm_dim = self.get_nodeattr("ifm_dim")
+        assert(ifm_dim[-1] % simd == 0)
+        ifm_dim[-1] = ifm_dim[-1]/simd
+        exp_cycles = np.prod(ifm_dim)+ifm_dim[-1] # This is a two pass op
+        return int(exp_cycles)
+
+    def dsp_estimation(self, fpgapart):
+        simd = self.get_nodeattr("simd")
+        return simd*3
+
+
     def prepare_rtlsim(self):
         # this node currently does not support rtlsim
         verilog_files = self.get_all_verilog_filenames(abspath=True)
